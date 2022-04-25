@@ -25,8 +25,8 @@ export default function App() {
     return (
       <SafeAreaProvider>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName={Screens.ONBOARDING}>
-            <Stack.Screen name={Screens.ONBOARDING} component={Home} />
+          <Stack.Navigator initialRouteName={Screens.HOME}>
+            <Stack.Screen name={Screens.HOME} component={Home} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>

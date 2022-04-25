@@ -1,3 +1,3 @@
 export const Screens = {
-  ONBOARDING: "Onboarding",
+  HOME: "Home",
 };
