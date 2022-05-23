@@ -1,21 +1,26 @@
 import React from "react";
-import { View, StyleSheet, Text, Image } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { Colors } from "../theme";
-import { SvgUri } from "react-native-svg";
 import { Button } from "../components";
 import { getScreenPercent } from "../utils/calc";
+import { Screens } from "../navigations";
 
-export const Onboarding = ({}) => {
+export const Onboarding = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.imgContainer}>
-        <Image source={require("../assets/Logo-black.png")} />
+        <Image
+          source={require("../assets/Logo-black.png")}
+          resizeMode="contain"
+          style={{ height: 80 }}
+        />
       </View>
       <View style={styles.btnContainer}>
         <Button
           title={"Login"}
-          textStyle={{ fontSize: 16, color: "white" }}
-          style={{ ...styles.button }}
+          textStyle={{ fontSize: 16, color: Colors.SECONDARY }}
+          style={{ ...styles.button, ...styles.loginButton }}
+          onPress={() => navigation.navigate(Screens.LOGIN)}
         />
         <Button
           title={"Signup"}
@@ -45,9 +50,10 @@ const styles = StyleSheet.create({
     height: "13%",
     marginVertical: getScreenPercent(2.3),
   },
-  // loginButton: {
-  //   borderWidth,
-  // },
+  loginButton: {
+    borderWidth: 2,
+    backgroundColor: Colors.PRIMARY,
+  },
   btnContainer: {
     height: "50%",
     justifyContent: "center",
