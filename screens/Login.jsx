@@ -39,16 +39,18 @@ export const Login = ({ navigation }) => {
           />
         </View>
         <View style={styles.formContainer}>
-          <Text
-            style={{
-              ...styles.label,
-              fontSize: getScreenPercent(10),
-              marginBottom: "10%",
-            }}
-          >
-            Login
-          </Text>
-          <Text style={styles.label}>Id Number</Text>
+          <View style={{ alignItems: "center" }}>
+            <Text
+              style={{
+                ...styles.label,
+                fontSize: getScreenPercent(10),
+                marginBottom: "10%",
+              }}
+            >
+              Login
+            </Text>
+          </View>
+          <Text style={styles.label}>ID Number</Text>
           <View style={styles.input}>
             <TextInput
               style={{ flex: 1, borderWidth: 0 }}

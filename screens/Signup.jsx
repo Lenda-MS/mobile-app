@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import RadioButtonRN from "radio-buttons-react-native";
 import { Colors, FONTS } from "../theme";
 import { getScreenPercent } from "../utils";
 import { Button } from "../components";
@@ -17,6 +18,14 @@ import { Screens } from "../navigations";
 export const Signup = ({ navigation }) => {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
+  const data = [
+    {
+      label: "Student",
+    },
+    {
+      label: "Staff",
+    },
+  ];
 
   return (
     <KeyboardAwareScrollView
@@ -28,7 +37,7 @@ export const Signup = ({ navigation }) => {
         <View
           style={{
             alignItems: "center",
-            height: "30%",
+            height: "25%",
             justifyContent: "center",
           }}
         >
@@ -39,16 +48,18 @@ export const Signup = ({ navigation }) => {
           />
         </View>
         <View style={styles.formContainer}>
-          <Text
-            style={{
-              ...styles.label,
-              fontSize: getScreenPercent(10),
-              marginBottom: "10%",
-            }}
-          >
-            Signup
-          </Text>
-          <Text style={styles.label}>Id Number</Text>
+          <View style={{ alignItems: "center" }}>
+            <Text
+              style={{
+                ...styles.label,
+                fontSize: getScreenPercent(10),
+                marginBottom: "10%",
+              }}
+            >
+              Signup
+            </Text>
+          </View>
+          <Text style={styles.label}>ID Number</Text>
           <View style={styles.input}>
             <TextInput
               style={{ flex: 1, borderWidth: 0 }}
@@ -73,6 +84,17 @@ export const Signup = ({ navigation }) => {
               autoFocus={true}
               value={id}
               onChangeText={(text) => setId(text)}
+            />
+          </View>
+
+          <View style={{ marginBottom: "5%" }}>
+            <RadioButtonRN
+              data={data}
+              selectedBtn={(e) => console.log(e)}
+              activeColor={Colors.SECONDARY}
+              circleSize={14}
+              box={false}
+              textStyle={styles.label}
             />
           </View>
 
