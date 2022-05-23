@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Screens } from "./navigations";
-import { Home } from "./screens";
+import { Onboarding } from "./screens";
 import {
   useFonts,
   WorkSans_300Light,
@@ -25,8 +25,12 @@ export default function App() {
     return (
       <SafeAreaProvider>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName={Screens.HOME}>
-            <Stack.Screen name={Screens.HOME} component={Home} />
+          <Stack.Navigator initialRouteName={Screens.ONBOARDING}>
+            <Stack.Screen
+              name={Screens.ONBOARDING}
+              component={Onboarding}
+              options={{ headerShown: false }}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>
