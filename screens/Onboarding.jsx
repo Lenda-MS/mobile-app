@@ -26,6 +26,7 @@ export const Onboarding = ({ navigation }) => {
           title={"Signup"}
           textStyle={{ fontSize: 16, color: "white" }}
           style={styles.button}
+          onPress={() => navigation.navigate(Screens.SIGNUP)}
         />
       </View>
     </View>

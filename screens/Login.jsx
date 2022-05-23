@@ -28,7 +28,7 @@ export const Login = ({ navigation }) => {
         <View
           style={{
             alignItems: "center",
-            height: "50%",
+            height: "40%",
             justifyContent: "center",
           }}
         >
@@ -39,6 +39,15 @@ export const Login = ({ navigation }) => {
           />
         </View>
         <View style={styles.formContainer}>
+          <Text
+            style={{
+              ...styles.label,
+              fontSize: getScreenPercent(10),
+              marginBottom: "10%",
+            }}
+          >
+            Login
+          </Text>
           <Text style={styles.label}>Id Number</Text>
           <View style={styles.input}>
             <TextInput
@@ -94,7 +103,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.SECONDARY,
     width: "100%",
     backgroundColor: Colors.SECONDARY,
-    height: "17%",
+    height: "15%",
     marginVertical: getScreenPercent(2.3),
   },
   input: {
