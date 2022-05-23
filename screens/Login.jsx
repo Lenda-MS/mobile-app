@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.SECONDARY,
     width: "100%",
     backgroundColor: Colors.SECONDARY,
-    height: "15%",
+    height: "14%",
     marginVertical: getScreenPercent(2.3),
   },
   input: {

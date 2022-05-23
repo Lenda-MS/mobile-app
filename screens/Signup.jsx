@@ -82,8 +82,9 @@ export const Signup = ({ navigation }) => {
             <TextInput
               style={{ flex: 1, borderWidth: 0 }}
               autoFocus={true}
-              value={id}
-              onChangeText={(text) => setId(text)}
+              textContentType="password"
+              value={password}
+              onChangeText={(text) => setPassword(text)}
             />
           </View>
 
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.SECONDARY,
     width: "100%",
     backgroundColor: Colors.SECONDARY,
-    height: "12%",
+    height: "10%",
     marginVertical: getScreenPercent(2.3),
   },
   input: {
