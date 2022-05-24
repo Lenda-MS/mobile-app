@@ -15,7 +15,7 @@ import { Button } from "../components";
 import { Screens } from "../navigations";
 
 export const Login = ({ navigation }) => {
-  const [id, setId] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   return (
@@ -50,13 +50,13 @@ export const Login = ({ navigation }) => {
               Login
             </Text>
           </View>
-          <Text style={styles.label}>ID Number</Text>
+          <Text style={styles.label}>Email</Text>
           <View style={styles.input}>
             <TextInput
               style={{ flex: 1, borderWidth: 0 }}
               autoFocus={true}
-              value={id}
-              onChangeText={(text) => setId(text)}
+              value={email}
+              onChangeText={(text) => setEmail(text)}
             />
           </View>
           <Text style={styles.label}>Password</Text>
@@ -71,6 +71,7 @@ export const Login = ({ navigation }) => {
           </View>
           <Button
             title={"Login"}
+            spinnerStyle={{ color: Colors.PRIMARY }}
             textStyle={{ fontSize: 16, color: "white" }}
             style={styles.button}
           />
@@ -93,6 +94,7 @@ export const Login = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.PRIMARY,
   },
   formContainer: {
     paddingHorizontal: "8%",

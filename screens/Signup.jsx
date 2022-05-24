@@ -9,23 +9,15 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import RadioButtonRN from "radio-buttons-react-native";
 import { Colors, FONTS } from "../theme";
 import { getScreenPercent } from "../utils";
 import { Button } from "../components";
+import PhoneInput from "react-native-phone-number-input";
 import { Screens } from "../navigations";
 
 export const Signup = ({ navigation }) => {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
-  const data = [
-    {
-      label: "Student",
-    },
-    {
-      label: "Staff",
-    },
-  ];
 
   return (
     <KeyboardAwareScrollView
@@ -59,7 +51,7 @@ export const Signup = ({ navigation }) => {
               Signup
             </Text>
           </View>
-          <Text style={styles.label}>ID Number</Text>
+          <Text style={styles.label}>Full Name</Text>
           <View style={styles.input}>
             <TextInput
               style={{ flex: 1, borderWidth: 0 }}
@@ -87,20 +79,31 @@ export const Signup = ({ navigation }) => {
               onChangeText={(text) => setPassword(text)}
             />
           </View>
-
-          <View style={{ marginBottom: "5%" }}>
-            <RadioButtonRN
-              data={data}
-              selectedBtn={(e) => console.log(e)}
-              activeColor={Colors.SECONDARY}
-              circleSize={14}
-              box={false}
-              textStyle={styles.label}
-            />
-          </View>
+          <Text style={styles.label}>Phone Number</Text>
+          <PhoneInput
+            defaultValue={""}
+            defaultCode="GH"
+            layout="first"
+            disableArrowIcon={true}
+            onChangeText={(text) => {}}
+            onChangeFormattedText={(text) => {}}
+            withDarkTheme
+            textContainerStyle={{ backgroundColor: Colors.PRIMARY }}
+            codeTextStyle={styles.label}
+            containerStyle={[
+              styles.input,
+              {
+                paddingBottom: 0,
+              },
+            ]}
+            countryPickerButtonStyle={{ width: 0 }}
+            textInputStyle={styles.label}
+            autoFocus
+          />
 
           <Button
             title={"Signup"}
+            spinnerStyle={{ color: Colors.PRIMARY }}
             textStyle={{ fontSize: 16, color: "white" }}
             style={styles.button}
           />
@@ -123,6 +126,7 @@ export const Signup = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.PRIMARY,
   },
   formContainer: {
     paddingHorizontal: "8%",
@@ -141,7 +145,8 @@ const styles = StyleSheet.create({
   input: {
     borderBottomColor: Colors.SECONDARY,
     borderWidth: 1.5,
-    height: 50,
+    height: getScreenPercent(13.8),
+    width: "100%",
     borderRadius: 10,
     marginTop: "3%",
     flexDirection: "row",
