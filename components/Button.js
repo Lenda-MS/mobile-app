@@ -24,11 +24,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 10,
     backgroundColor: Colors.PRIMARY,
-    // shadowOffset: { height: 10, width: 0 },
-    // shadowColor: Colors.SECONDARY,
-    // elevation: 1,
-    // shadowOpacity: 0.2,
-    // shadowRadius: 30,
   },
   buttonText: {
     color: Colors.SECONDARY,
