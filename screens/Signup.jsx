@@ -29,7 +29,7 @@ export const Signup = ({ navigation }) => {
         <View
           style={{
             alignItems: "center",
-            height: "25%",
+            height: "23%",
             justifyContent: "center",
           }}
         >
@@ -52,54 +52,61 @@ export const Signup = ({ navigation }) => {
             </Text>
           </View>
           <Text style={styles.label}>Full Name</Text>
-          <View style={styles.input}>
-            <TextInput
-              style={{ flex: 1, borderWidth: 0 }}
-              autoFocus={true}
-              value={id}
-              onChangeText={(text) => setId(text)}
-            />
+          <View style={styles.inputContainer}>
+            <View style={styles.input}>
+              <TextInput
+                style={{ flex: 1, borderWidth: 0 }}
+                autoFocus={true}
+                value={id}
+                onChangeText={(text) => setId(text)}
+              />
+            </View>
+            <Text>Error</Text>
           </View>
-          <Text style={styles.label}>Email</Text>
-          <View style={styles.input}>
-            <TextInput
-              style={{ flex: 1, borderWidth: 0 }}
-              autoFocus={true}
-              value={id}
-              onChangeText={(text) => setId(text)}
-            />
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Email</Text>
+            <View style={styles.input}>
+              <TextInput
+                style={{ flex: 1, borderWidth: 0 }}
+                autoFocus={true}
+                value={id}
+                onChangeText={(text) => setId(text)}
+              />
+            </View>
+            <Text>Error</Text>
           </View>
-          <Text style={styles.label}>Password</Text>
-          <View style={styles.input}>
-            <TextInput
-              style={{ flex: 1, borderWidth: 0 }}
-              autoFocus={true}
-              textContentType="password"
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-            />
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Password</Text>
+            <View style={styles.input}>
+              <TextInput
+                style={{ flex: 1, borderWidth: 0 }}
+                autoFocus={true}
+                textContentType="password"
+                value={password}
+                onChangeText={(text) => setPassword(text)}
+              />
+            </View>
+            <Text>Error</Text>
           </View>
-          <Text style={styles.label}>Phone Number</Text>
-          <PhoneInput
-            defaultValue={""}
-            defaultCode="GH"
-            layout="first"
-            disableArrowIcon={true}
-            onChangeText={(text) => {}}
-            onChangeFormattedText={(text) => {}}
-            withDarkTheme
-            textContainerStyle={{ backgroundColor: Colors.PRIMARY }}
-            codeTextStyle={styles.label}
-            containerStyle={[
-              styles.input,
-              {
-                paddingBottom: 0,
-              },
-            ]}
-            countryPickerButtonStyle={{ width: 0 }}
-            textInputStyle={styles.label}
-            autoFocus
-          />
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Phone Number</Text>
+            <PhoneInput
+              defaultValue={""}
+              defaultCode="GH"
+              layout="first"
+              disableArrowIcon={true}
+              onChangeText={(text) => {}}
+              onChangeFormattedText={(text) => {}}
+              withDarkTheme
+              textContainerStyle={{ backgroundColor: Colors.PRIMARY }}
+              codeTextStyle={styles.label}
+              containerStyle={[styles.input]}
+              countryPickerButtonStyle={{ width: 0 }}
+              textInputStyle={styles.label}
+              autoFocus
+            />
+            <Text>Error</Text>
+          </View>
 
           <Button
             title={"Signup"}
@@ -142,17 +149,21 @@ const styles = StyleSheet.create({
     height: "10%",
     marginVertical: getScreenPercent(2.3),
   },
+  inputContainer: {
+    marginBottom: "2%",
+    marginTop: "1%",
+  },
   input: {
     borderBottomColor: Colors.SECONDARY,
     borderWidth: 1.5,
     height: getScreenPercent(13.8),
     width: "100%",
     borderRadius: 10,
-    marginTop: "3%",
+    marginTop: "2%",
     flexDirection: "row",
     paddingBottom: getScreenPercent(0.4),
     paddingHorizontal: getScreenPercent(4),
-    marginBottom: "5%",
     justifyContent: "space-between",
+    marginBottom: 2,
   },
 });
