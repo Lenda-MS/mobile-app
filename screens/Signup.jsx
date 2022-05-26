@@ -12,7 +12,6 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { Colors, FONTS } from "../theme";
 import { getScreenPercent } from "../utils";
 import { Button } from "../components";
-import PhoneInput from "react-native-phone-number-input";
 import { Screens } from "../navigations";
 
 export const Signup = ({ navigation }) => {
@@ -61,7 +60,7 @@ export const Signup = ({ navigation }) => {
                 onChangeText={(text) => setId(text)}
               />
             </View>
-            <Text>Error</Text>
+            <Text style={styles.errorStyle}>Error</Text>
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Email</Text>
@@ -73,7 +72,7 @@ export const Signup = ({ navigation }) => {
                 onChangeText={(text) => setId(text)}
               />
             </View>
-            <Text>Error</Text>
+            <Text style={styles.errorStyle}>Error</Text>
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Password</Text>
@@ -86,26 +85,25 @@ export const Signup = ({ navigation }) => {
                 onChangeText={(text) => setPassword(text)}
               />
             </View>
-            <Text>Error</Text>
+            <Text style={styles.errorStyle}>Error</Text>
           </View>
           <View style={styles.inputContainer}>
             <Text style={styles.label}>Phone Number</Text>
-            <PhoneInput
-              defaultValue={""}
-              defaultCode="GH"
-              layout="first"
-              disableArrowIcon={true}
-              onChangeText={(text) => {}}
-              onChangeFormattedText={(text) => {}}
-              withDarkTheme
-              textContainerStyle={{ backgroundColor: Colors.PRIMARY }}
-              codeTextStyle={styles.label}
-              containerStyle={[styles.input]}
-              countryPickerButtonStyle={{ width: 0 }}
-              textInputStyle={styles.label}
-              autoFocus
-            />
-            <Text>Error</Text>
+            <View style={[styles.input, styles.phoneInput]}>
+              <Text
+                style={[styles.label, { marginRight: getScreenPercent(2) }]}
+              >
+                +233
+              </Text>
+              <TextInput
+                style={{ flex: 1, borderWidth: 0 }}
+                autoFocus={true}
+                textContentType="password"
+                value={password}
+                onChangeText={(text) => setPassword(text)}
+              />
+            </View>
+            <Text style={styles.errorStyle}>Error</Text>
           </View>
 
           <Button
@@ -146,17 +144,24 @@ const styles = StyleSheet.create({
     borderColor: Colors.SECONDARY,
     width: "100%",
     backgroundColor: Colors.SECONDARY,
-    height: "10%",
+    height: "9%",
     marginVertical: getScreenPercent(2.3),
+  },
+  phoneInput: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   inputContainer: {
     marginBottom: "2%",
     marginTop: "1%",
   },
+  errorStyle: {
+    color: "red",
+  },
   input: {
     borderBottomColor: Colors.SECONDARY,
     borderWidth: 1.5,
-    height: getScreenPercent(13.8),
+    height: getScreenPercent(12.5),
     width: "100%",
     borderRadius: 10,
     marginTop: "2%",
