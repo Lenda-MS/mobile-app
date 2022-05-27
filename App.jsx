@@ -1,12 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { StatusBar } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Screens } from "./navigations";
-import { firebase } from "./firebase";
 
-import { Onboarding, Login, Signup } from "./screens";
+import { Onboarding, Login, Signup, Home, Application } from "./screens";
 import {
   useFonts,
   WorkSans_300Light,
@@ -17,27 +16,6 @@ import AppLoading from "expo-app-loading";
 
 const Stack = createNativeStackNavigator();
 export default function App() {
-  // useEffect(() => {
-  //   const usersRef = firebase.firestore().collection("users");
-  //   const unSubscribe = firebase.auth().onAuthStateChanged((user) => {
-  //     if (user) {
-  //       usersRef
-  //         .doc(user.uid)
-  //         .get()
-  //         .then((document) => {
-  //           const userData = document.data();
-  //           setLoading(false);
-  //           setUser(userData);
-  //         })
-  //         .catch((error) => {
-  //           setLoading(false);
-  //         });
-  //     } else {
-  //       setLoading(false);
-  //     }
-  //   });
-  //   return () => unSubscribe();
-  // }, []);
   const [fontsLoaded] = useFonts({
     WorkSans_300Light,
     WorkSans_400Regular,
@@ -64,6 +42,16 @@ export default function App() {
             <Stack.Screen
               name={Screens.SIGNUP}
               component={Signup}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name={Screens.HOME}
+              component={Home}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name={Screens.APPLICATION}
+              component={Application}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -21,6 +21,15 @@ export const Signup = ({ navigation }) => {
   const [loading, setLoading] = useState();
   const [isError, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
+  useEffect(() => {
+    const unSubscribe = firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        navigation.navigate(Screens.APPLICATION);
+      }
+    });
+
+    return unSubscribe;
+  }, []);
   const signupSchema = Yup.object().shape({
     fullname: Yup.string().required("Fullname is required"),
     password: Yup.string()
@@ -71,6 +80,7 @@ export const Signup = ({ navigation }) => {
                 id: uid,
                 ...values,
                 phoneNumber: `233${values.phoneNumber}`,
+                status: "inactive",
               };
               const usersRef = firebase.firestore().collection("users");
               await usersRef.doc(uid).set(data);

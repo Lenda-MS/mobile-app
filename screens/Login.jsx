@@ -21,6 +21,7 @@ export const Login = ({ navigation }) => {
   const [loading, setLoading] = useState();
   const [isError, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
+
   const loginSchema = Yup.object().shape({
     password: Yup.string()
       .min(5, "Enter minimum of 5 characters")
@@ -62,9 +63,11 @@ export const Login = ({ navigation }) => {
               const uid = res.user.uid;
               const usersRef = firebase.firestore().collection("users");
               const doc = await usersRef.doc(uid).get();
-              if (!doc.exists) {
-                console.log("doc does not exist");
-              }
+              const userData = doc.data();
+              if (userData.status === "inactive")
+                navigation.navigate(Screens.APPLICATION);
+              if (userData.status === "approved")
+                navigation.navigate(Screens.HOME);
               resetForm();
               setLoading(false);
             } catch (err) {
