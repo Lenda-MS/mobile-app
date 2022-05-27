@@ -113,7 +113,10 @@ export const Login = ({ navigation }) => {
                     value={values.email}
                     onBlur={handleBlur("email")}
                     autoCapitalize={"none"}
-                    onChangeText={handleChange("email")}
+                    onChangeText={() => {
+                      handleChange("email");
+                      setError(false);
+                    }}
                   />
                 </View>
                 {errors.email && touched.email ? (
@@ -129,7 +132,10 @@ export const Login = ({ navigation }) => {
                     secureTextEntry={true}
                     value={values.password}
                     onBlur={handleBlur("password")}
-                    onChangeText={handleChange("password")}
+                    onChangeText={() => {
+                      handleChange("password");
+                      setError(false);
+                    }}
                   />
                 </View>
                 {errors.password && touched.password ? (
