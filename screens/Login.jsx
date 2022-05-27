@@ -113,8 +113,9 @@ export const Login = ({ navigation }) => {
                     value={values.email}
                     onBlur={handleBlur("email")}
                     autoCapitalize={"none"}
-                    onChangeText={() => {
-                      handleChange("email");
+                    textContentType="emailAddress"
+                    onChangeText={(text) => {
+                      handleChange("email")(text);
                       setError(false);
                     }}
                   />
@@ -132,8 +133,8 @@ export const Login = ({ navigation }) => {
                     secureTextEntry={true}
                     value={values.password}
                     onBlur={handleBlur("password")}
-                    onChangeText={() => {
-                      handleChange("password");
+                    onChangeText={(text) => {
+                      handleChange("password")(text);
                       setError(false);
                     }}
                   />

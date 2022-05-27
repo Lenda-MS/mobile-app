@@ -11,7 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Colors, FONTS } from "../theme";
 import { getScreenPercent } from "../utils";
-import { Button } from "../components";
+import { Alert, Button } from "../components";
 import { Screens } from "../navigations";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -19,6 +19,8 @@ import { firebase } from "../firebase";
 
 export const Signup = ({ navigation }) => {
   const [loading, setLoading] = useState();
+  const [isError, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState();
   const signupSchema = Yup.object().shape({
     fullname: Yup.string().required("Fullname is required"),
     password: Yup.string()
@@ -34,13 +36,13 @@ export const Signup = ({ navigation }) => {
     <KeyboardAwareScrollView
       contentContainerStyle={styles.container}
       resetScrollToCoords={{ x: 0, y: 0 }}
-      scrollEnabled={true}
+      scrollEnabled={false}
     >
       <SafeAreaView edges={["top"]}>
         <View
           style={{
             alignItems: "center",
-            height: "23%",
+            height: "22%",
             justifyContent: "center",
           }}
         >
@@ -59,20 +61,31 @@ export const Signup = ({ navigation }) => {
           }}
           validationSchema={signupSchema}
           onSubmit={async (values, { resetForm }) => {
-            setLoading(true);
-            const res = await firebase
-              .auth()
-              .createUserWithEmailAndPassword(values.email, values.password);
-            const uid = res.user.uid;
-            const data = {
-              id: uid,
-              ...values,
-              phoneNumber: `233${values.phoneNumber}`,
-            };
-            const usersRef = firebase.firestore().collection("users");
-            await usersRef.doc(uid).set(data);
-            resetForm();
-            setLoading(false);
+            try {
+              setLoading(true);
+              const res = await firebase
+                .auth()
+                .createUserWithEmailAndPassword(values.email, values.password);
+              const uid = res.user.uid;
+              const data = {
+                id: uid,
+                ...values,
+                phoneNumber: `233${values.phoneNumber}`,
+              };
+              const usersRef = firebase.firestore().collection("users");
+              await usersRef.doc(uid).set(data);
+              resetForm();
+              setLoading(false);
+            } catch (err) {
+              setError(true);
+              const message =
+                err.code === "auth/email-already-in-use"
+                  ? "🥵 Email is already in use"
+                  : "🥵 Somethin went wrong";
+
+              setErrorMessage(message);
+              setLoading(false);
+            }
           }}
         >
           {({
@@ -89,12 +102,13 @@ export const Signup = ({ navigation }) => {
                   style={{
                     ...styles.label,
                     fontSize: getScreenPercent(10),
-                    marginBottom: "10%",
+                    marginBottom: "6%",
                   }}
                 >
                   Signup
                 </Text>
               </View>
+              {isError && <Alert type={"error"} text={errorMessage} />}
               <Text style={styles.label}>Full Name</Text>
               <View style={styles.inputContainer}>
                 <View style={styles.input}>
@@ -102,6 +116,7 @@ export const Signup = ({ navigation }) => {
                     style={{ flex: 1, borderWidth: 0 }}
                     onBlur={handleBlur("fullname")}
                     value={values.fullname}
+                    textContentType="name"
                     onChangeText={handleChange("fullname")}
                   />
                 </View>
@@ -116,9 +131,13 @@ export const Signup = ({ navigation }) => {
                     style={{ flex: 1, borderWidth: 0 }}
                     keyboardType={"email-address"}
                     value={values.email}
+                    textContentType="emailAddress"
                     onBlur={handleBlur("email")}
                     autoCapitalize={"none"}
-                    onChangeText={handleChange("email")}
+                    onChangeText={(text) => {
+                      setError(false);
+                      handleChange("email")(text);
+                    }}
                   />
                 </View>
                 {errors.email && touched.email ? (
@@ -130,7 +149,7 @@ export const Signup = ({ navigation }) => {
                 <View style={styles.input}>
                   <TextInput
                     style={{ flex: 1, borderWidth: 0 }}
-                    textContentType="password"
+                    textContentType="newPassword"
                     secureTextEntry={true}
                     value={values.password}
                     onBlur={handleBlur("password")}
@@ -154,6 +173,7 @@ export const Signup = ({ navigation }) => {
                     value={values.phoneNumber}
                     keyboardType={"phone-pad"}
                     maxLength={9}
+                    textContentType={"telephoneNumber"}
                     onBlur={handleBlur("phoneNumber")}
                     onChangeText={handleChange("phoneNumber")}
                   />
