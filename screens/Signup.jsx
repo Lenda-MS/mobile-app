@@ -25,7 +25,9 @@ export const Signup = ({ navigation }) => {
       .min(5, "Enter minimum of 5 characters")
       .required("Password is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
-    phoneNumber: Yup.string().min(9, "Invalid phone number"),
+    phoneNumber: Yup.string()
+      .min(9, "Invalid phone number")
+      .required("Phone number is required"),
   });
 
   return (
@@ -68,7 +70,7 @@ export const Signup = ({ navigation }) => {
               phoneNumber: `233${values.phoneNumber}`,
             };
             const usersRef = firebase.firestore().collection("users");
-            const ref = await usersRef.doc(uid).set(data);
+            await usersRef.doc(uid).set(data);
             resetForm();
             setLoading(false);
           }}

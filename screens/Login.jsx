@@ -13,10 +13,18 @@ import { Colors, FONTS } from "../theme";
 import { getScreenPercent } from "../utils";
 import { Button } from "../components";
 import { Screens } from "../navigations";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import { firebase } from "../firebase";
 
 export const Login = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState();
+  const loginSchema = Yup.object().shape({
+    password: Yup.string()
+      .min(5, "Enter minimum of 5 characters")
+      .required("Password is required"),
+    email: Yup.string().email("Invalid email").required("Email is required"),
+  });
 
   return (
     <KeyboardAwareScrollView
@@ -38,54 +46,109 @@ export const Login = ({ navigation }) => {
             style={{ height: 80 }}
           />
         </View>
-        <View style={styles.formContainer}>
-          <View style={{ alignItems: "center" }}>
-            <Text
-              style={{
-                ...styles.label,
-                fontSize: getScreenPercent(10),
-                marginBottom: "10%",
-              }}
-            >
-              Login
-            </Text>
-          </View>
-          <Text style={styles.label}>Email</Text>
-          <View style={styles.input}>
-            <TextInput
-              style={{ flex: 1, borderWidth: 0 }}
-              autoFocus={true}
-              value={email}
-              onChangeText={(text) => setEmail(text)}
-            />
-          </View>
-          <Text style={styles.label}>Password</Text>
-          <View style={styles.input}>
-            <TextInput
-              style={{ flex: 1, borderWidth: 0 }}
-              textContentType="password"
-              autoFocus={true}
-              value={password}
-              onChangeText={(text) => setPassword(text)}
-            />
-          </View>
-          <Button
-            title={"Login"}
-            spinnerStyle={{ color: Colors.PRIMARY }}
-            textStyle={{ fontSize: 16, color: "white" }}
-            style={styles.button}
-          />
-          <View style={{ alignItems: "center", marginTop: "5%" }}>
-            <View style={{ flexDirection: "row" }}>
-              <Text style={styles.label}>Dont have an account?</Text>
-              <TouchableOpacity
-                onPress={() => navigation.navigate(Screens.SIGNUP)}
-              >
-                <Text style={{ ...styles.label, marginLeft: 5 }}>Signup</Text>
-              </TouchableOpacity>
+        <Formik
+          initialValues={{
+            email: "",
+            password: "",
+          }}
+          onSubmit={async (values, { resetForm }) => {
+            setLoading(true);
+            try {
+              const res = await firebase
+                .auth()
+                .signInWithEmailAndPassword(values.email, values.password);
+              const uid = res.user.uid;
+              const usersRef = firebase.firestore().collection("users");
+              const doc = await usersRef.doc(uid).get();
+              if (!doc.exists) {
+                console.log("doc does not exist");
+              }
+              console.log(doc.data());
+              resetForm();
+              setLoading(false);
+            } catch (err) {
+              console.log(err);
+              setLoading(false);
+            }
+            setLoading(false);
+          }}
+          validationSchema={loginSchema}
+        >
+          {({
+            handleBlur,
+            handleChange,
+            handleSubmit,
+            errors,
+            values,
+            touched,
+          }) => (
+            <View style={styles.formContainer}>
+              <View style={{ alignItems: "center" }}>
+                <Text
+                  style={{
+                    ...styles.label,
+                    fontSize: getScreenPercent(10),
+                    marginBottom: "10%",
+                  }}
+                >
+                  Login
+                </Text>
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Email</Text>
+                <View style={styles.input}>
+                  <TextInput
+                    style={{ flex: 1, borderWidth: 0 }}
+                    keyboardType={"email-address"}
+                    value={values.email}
+                    onBlur={handleBlur("email")}
+                    autoCapitalize={"none"}
+                    onChangeText={handleChange("email")}
+                  />
+                </View>
+                {errors.email && touched.email ? (
+                  <Text style={styles.errorStyle}>{errors.email}</Text>
+                ) : null}
+              </View>
+              <View style={styles.inputContainer}>
+                <Text style={styles.label}>Password</Text>
+                <View style={styles.input}>
+                  <TextInput
+                    style={{ flex: 1, borderWidth: 0 }}
+                    textContentType="password"
+                    secureTextEntry={true}
+                    value={values.password}
+                    onBlur={handleBlur("password")}
+                    onChangeText={handleChange("password")}
+                  />
+                </View>
+                {errors.password && touched.password ? (
+                  <Text style={styles.errorStyle}>{errors.password}</Text>
+                ) : null}
+              </View>
+              <Button
+                title={"Login"}
+                spinnerStyle={{ color: Colors.PRIMARY }}
+                loading={loading}
+                textStyle={{ fontSize: 16, color: "white" }}
+                style={styles.button}
+                onPress={handleSubmit}
+              />
+              <View style={{ alignItems: "center", marginTop: "5%" }}>
+                <View style={{ flexDirection: "row" }}>
+                  <Text style={styles.label}>Dont have an account?</Text>
+                  <TouchableOpacity
+                    onPress={() => navigation.navigate(Screens.SIGNUP)}
+                  >
+                    <Text style={{ ...styles.label, marginLeft: 5 }}>
+                      Signup
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
-          </View>
-        </View>
+          )}
+        </Formik>
       </SafeAreaView>
     </KeyboardAwareScrollView>
   );
@@ -110,16 +173,27 @@ const styles = StyleSheet.create({
     height: "14%",
     marginVertical: getScreenPercent(2.3),
   },
+  errorStyle: {
+    color: "red",
+  },
+  inputContainer: {
+    marginBottom: "2%",
+    marginTop: "1%",
+  },
+  errorStyle: {
+    color: "red",
+  },
   input: {
     borderBottomColor: Colors.SECONDARY,
     borderWidth: 1.5,
-    height: 50,
+    height: getScreenPercent(12.5),
+    width: "100%",
     borderRadius: 10,
-    marginTop: "3%",
+    marginTop: "2%",
     flexDirection: "row",
     paddingBottom: getScreenPercent(0.4),
     paddingHorizontal: getScreenPercent(4),
-    marginBottom: "5%",
     justifyContent: "space-between",
+    marginBottom: 2,
   },
 });
