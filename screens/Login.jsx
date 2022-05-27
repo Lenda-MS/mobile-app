@@ -11,7 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Colors, FONTS } from "../theme";
 import { getScreenPercent } from "../utils";
-import { Button } from "../components";
+import { Alert, Button } from "../components";
 import { Screens } from "../navigations";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -19,6 +19,8 @@ import { firebase } from "../firebase";
 
 export const Login = ({ navigation }) => {
   const [loading, setLoading] = useState();
+  const [isError, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState();
   const loginSchema = Yup.object().shape({
     password: Yup.string()
       .min(5, "Enter minimum of 5 characters")
@@ -36,7 +38,7 @@ export const Login = ({ navigation }) => {
         <View
           style={{
             alignItems: "center",
-            height: "40%",
+            height: "35%",
             justifyContent: "center",
           }}
         >
@@ -63,11 +65,18 @@ export const Login = ({ navigation }) => {
               if (!doc.exists) {
                 console.log("doc does not exist");
               }
-              console.log(doc.data());
               resetForm();
               setLoading(false);
             } catch (err) {
-              console.log(err);
+              setError(true);
+              const message =
+                err.code === "auth/user-not-found"
+                  ? "🥵 Account does not exist"
+                  : err.code === "auth/wrong-password"
+                  ? "🥵 Your password is incorrect"
+                  : "🥵 Somethin went wrong";
+
+              setErrorMessage(message);
               setLoading(false);
             }
             setLoading(false);
@@ -88,12 +97,13 @@ export const Login = ({ navigation }) => {
                   style={{
                     ...styles.label,
                     fontSize: getScreenPercent(10),
-                    marginBottom: "10%",
+                    marginBottom: "8%",
                   }}
                 >
                   Login
                 </Text>
               </View>
+              {isError && <Alert text={errorMessage} type="error" />}
               <View style={styles.inputContainer}>
                 <Text style={styles.label}>Email</Text>
                 <View style={styles.input}>
