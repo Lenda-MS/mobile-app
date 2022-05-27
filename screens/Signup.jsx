@@ -15,8 +15,10 @@ import { Button } from "../components";
 import { Screens } from "../navigations";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { firebase } from "../firebase";
 
 export const Signup = ({ navigation }) => {
+  const [loading, setLoading] = useState();
   const signupSchema = Yup.object().shape({
     fullname: Yup.string().required("Fullname is required"),
     password: Yup.string()
@@ -30,7 +32,7 @@ export const Signup = ({ navigation }) => {
     <KeyboardAwareScrollView
       contentContainerStyle={styles.container}
       resetScrollToCoords={{ x: 0, y: 0 }}
-      scrollEnabled={false}
+      scrollEnabled={true}
     >
       <SafeAreaView edges={["top"]}>
         <View
@@ -54,9 +56,21 @@ export const Signup = ({ navigation }) => {
             phoneNumber: "",
           }}
           validationSchema={signupSchema}
-          onSubmit={(values, { resetForm }) => {
-            console.log(values);
+          onSubmit={async (values, { resetForm }) => {
+            setLoading(true);
+            const res = await firebase
+              .auth()
+              .createUserWithEmailAndPassword(values.email, values.password);
+            const uid = res.user.uid;
+            const data = {
+              id: uid,
+              ...values,
+              phoneNumber: `233${values.phoneNumber}`,
+            };
+            const usersRef = firebase.firestore().collection("users");
+            const ref = await usersRef.doc(uid).set(data);
             resetForm();
+            setLoading(false);
           }}
         >
           {({
@@ -101,6 +115,7 @@ export const Signup = ({ navigation }) => {
                     keyboardType={"email-address"}
                     value={values.email}
                     onBlur={handleBlur("email")}
+                    autoCapitalize={"none"}
                     onChangeText={handleChange("email")}
                   />
                 </View>
@@ -149,6 +164,7 @@ export const Signup = ({ navigation }) => {
               <Button
                 title={"Signup"}
                 spinnerStyle={{ color: Colors.PRIMARY }}
+                loading={loading}
                 textStyle={{ fontSize: 16, color: "white" }}
                 style={styles.button}
                 onPress={handleSubmit}
