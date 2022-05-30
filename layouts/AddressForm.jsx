@@ -95,7 +95,7 @@ export const AddressForm = ({ useStep }) => {
           errors,
           values,
           touched,
-          setValues,
+          setFieldValue,
         }) => (
           <View style={styles.formContainer}>
             <Text
@@ -127,7 +127,7 @@ export const AddressForm = ({ useStep }) => {
               <SelectDropdown
                 data={data}
                 onSelect={(selectedItem) => {
-                  setValues({ region: selectedItem });
+                  setFieldValue("region", selectedItem);
                 }}
                 defaultButtonText=""
                 buttonTextStyle={{
@@ -135,7 +135,6 @@ export const AddressForm = ({ useStep }) => {
                   textAlign: "left",
                   fontSize: 14,
                 }}
-                onBlur={handleBlur("region")}
                 buttonStyle={{
                   width: "100%",
                   borderWidth: 1.5,
@@ -175,7 +174,7 @@ export const AddressForm = ({ useStep }) => {
               ) : null}
             </View>
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>GPS Address</Text>
+              <Text style={styles.label}>GPS Address [Optional]</Text>
               <View style={styles.input}>
                 <TextInput
                   style={{ flex: 1, borderWidth: 0, ...styles.label }}
