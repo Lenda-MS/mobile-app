@@ -1,0 +1,17 @@
+export const regions = [
+  "Ashanti",
+  "Volta",
+  "Eastern",
+  "Western",
+  "Ahafo",
+  "Oti",
+  "Bono East",
+  "Central",
+  "Northern",
+  "Upper West",
+  "Upper East",
+  "Savannah",
+  "Western North",
+  "North East",
+  "Greater Accra",
+];
