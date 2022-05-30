@@ -63,7 +63,7 @@ export default function App() {
             />
             <Stack.Screen
               name={Screens.APPLICATION}
-              options={{ headerShown: false, gestureEnabled: false }}
+              options={{ headerShown: false }}
             >
               {(props) => (
                 <ProtectedRoute component={Application} props={props} />

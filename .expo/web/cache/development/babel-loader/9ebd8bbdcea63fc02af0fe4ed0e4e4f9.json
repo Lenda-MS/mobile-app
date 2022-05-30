@@ -1,0 +1,1 @@
+{"ast":null,"code":"export var regions = [];","map":{"version":3,"sources":["/Users/cosmos/Projects/lenda/constants/regions.js"],"names":["regions"],"mappings":"AAAA,OAAO,IAAMA,OAAO,GAAG,EAAhB","sourcesContent":["export const regions = [];\n"]},"metadata":{},"sourceType":"module"}

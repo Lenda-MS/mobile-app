@@ -1,23 +1,19 @@
 import React, { useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, Text, TextInput } from "react-native";
 import { Colors, FONTS } from "../theme";
-import { getScreenPercent, getUser } from "../utils";
+import { getScreenPercent } from "../utils";
 import { Alert, Button } from "../components";
-import { Screens } from "../navigations";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import GlassX from "glassx";
 import { firebase } from "../firebase";
+import GlassX, { useStore } from "glassx";
+import SelectDropdown from "react-native-select-dropdown";
+import { regions } from "../constants";
 
-export const AddressForm = ({ navigation }) => {
+export const AddressForm = ({ useStep }) => {
   const [loading, setLoading] = useState();
-  const [errorMessage, setErrorMessage] = useState();
+
+  const [displaySuccess, setDisplaySuccess] = useStore("displaySuccess");
 
   const addressSchema = Yup.object().shape({
     address: Yup.string().required("Address is required"),
@@ -26,9 +22,11 @@ export const AddressForm = ({ navigation }) => {
     gps_address: Yup.string(),
   });
 
+  const data = regions;
+
   return (
     <>
-      {GlassX.get("displaySuccess") && (
+      {displaySuccess && (
         <Alert
           type="success"
           text="🎉 Your account has been created successfully"
@@ -36,7 +34,7 @@ export const AddressForm = ({ navigation }) => {
       )}
       <View
         style={{
-          marginBottom: getScreenPercent(10),
+          marginBottom: getScreenPercent(15),
           marginTop: getScreenPercent(5),
         }}
       >
@@ -63,11 +61,27 @@ export const AddressForm = ({ navigation }) => {
           city: "",
           gps_address: "",
         }}
-        onSubmit={async () => {
+        onSubmit={async (values, { resetForm }) => {
           try {
+            setLoading(true);
             const user = GlassX.get("user");
-            GlassX.set({ step: 2, displaySuccess: false });
             const usersRef = firebase.firestore().collection("users");
+            await usersRef.doc(user.id).update({ step: 2 });
+            const data = {
+              ...values,
+              userId: user.id,
+              status: "incomplete",
+              createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+              updatedAt: firebase.firestore.Timestamp.fromDate(new Date()),
+            };
+            const applicationsRef = firebase
+              .firestore()
+              .collection("applications");
+            await applicationsRef.doc().set(data);
+            setDisplaySuccess(false);
+            setLoading(false);
+            resetForm();
+            useStep(2);
           } catch (err) {
             setLoading(false);
           }
@@ -81,6 +95,7 @@ export const AddressForm = ({ navigation }) => {
           errors,
           values,
           touched,
+          setValues,
         }) => (
           <View style={styles.formContainer}>
             <Text
@@ -95,7 +110,7 @@ export const AddressForm = ({ navigation }) => {
               <Text style={styles.label}>Address</Text>
               <View style={styles.input}>
                 <TextInput
-                  style={{ flex: 1, borderWidth: 0 }}
+                  style={{ flex: 1, borderWidth: 0, ...styles.label }}
                   value={values.address}
                   onBlur={handleBlur("address")}
                   onChangeText={(text) => {
@@ -109,16 +124,32 @@ export const AddressForm = ({ navigation }) => {
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Region</Text>
-              <View style={styles.input}>
-                <TextInput
-                  style={{ flex: 1, borderWidth: 0 }}
-                  value={values.region}
-                  onBlur={handleBlur("region")}
-                  onChangeText={(text) => {
-                    handleChange("region")(text);
-                  }}
-                />
-              </View>
+              <SelectDropdown
+                data={data}
+                onSelect={(selectedItem) => {
+                  setValues({ region: selectedItem });
+                }}
+                defaultButtonText=""
+                buttonTextStyle={{
+                  ...styles.label,
+                  textAlign: "left",
+                  fontSize: 14,
+                }}
+                onBlur={handleBlur("region")}
+                buttonStyle={{
+                  width: "100%",
+                  borderWidth: 1.5,
+                  backgroundColor: Colors.PRIMARY,
+                  borderRadius: 10,
+                  marginTop: "2%",
+                }}
+                buttonTextAfterSelection={(selectedItem, index) => {
+                  return selectedItem;
+                }}
+                rowTextForSelection={(item, index) => {
+                  return item;
+                }}
+              />
               {errors.region && touched.region ? (
                 <Text style={styles.errorStyle}>{errors.region}</Text>
               ) : null}
@@ -127,7 +158,11 @@ export const AddressForm = ({ navigation }) => {
               <Text style={styles.label}>City</Text>
               <View style={styles.input}>
                 <TextInput
-                  style={{ flex: 1, borderWidth: 0 }}
+                  style={{
+                    flex: 1,
+                    borderWidth: 0,
+                    ...styles.label,
+                  }}
                   value={values.city}
                   onBlur={handleBlur("city")}
                   onChangeText={(text) => {
@@ -143,7 +178,7 @@ export const AddressForm = ({ navigation }) => {
               <Text style={styles.label}>GPS Address</Text>
               <View style={styles.input}>
                 <TextInput
-                  style={{ flex: 1, borderWidth: 0 }}
+                  style={{ flex: 1, borderWidth: 0, ...styles.label }}
                   value={values.gps_address}
                   onBlur={handleBlur("gps_address")}
                   onChangeText={(text) => {
@@ -157,6 +192,7 @@ export const AddressForm = ({ navigation }) => {
             </View>
             <Button
               title={"Next"}
+              loading={loading}
               textStyle={{ fontSize: 18, color: "white" }}
               style={styles.button}
               onPress={handleSubmit}

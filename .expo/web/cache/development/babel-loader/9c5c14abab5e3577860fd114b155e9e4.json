@@ -1,0 +1,1 @@
+{"ast":null,"code":"export * from \"./AddressForm\";\nexport * from \"./IDForm\";","map":{"version":3,"sources":["/Users/cosmos/Projects/lenda/layouts/index.js"],"names":[],"mappings":"AAAA;AACA","sourcesContent":["export * from \"./AddressForm\";\nexport * from \"./IDForm\";\n"]},"metadata":{},"sourceType":"module"}

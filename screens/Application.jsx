@@ -1,4 +1,4 @@
-import GlassX from "glassx";
+import { useStore } from "glassx";
 import React, { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,12 +7,15 @@ import { AddressForm, IDForm } from "../layouts";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export const Application = ({}) => {
+  const [step, setStep] = useStore("step");
+  const [_, setDisplaySuccess] = useStore("displaySuccess");
+
   useEffect(() => {
-    return () => GlassX.set({ displaySuccess: false, step: undefined });
+    return () => {
+      setStep(undefined);
+      setDisplaySuccess(false);
+    };
   }, []);
-  const step = GlassX.get("step");
-  const user = GlassX.get("user");
-  console.log(user);
 
   return (
     <KeyboardAwareScrollView
@@ -21,8 +24,7 @@ export const Application = ({}) => {
       scrollEnabled={false}
     >
       <SafeAreaView edges={["top"]}>
-        {step === 1 && <AddressForm />}
-        {step === 2 && <IDForm />}
+        {step === 1 ? <AddressForm useStep={setStep} /> : <IDForm />}
       </SafeAreaView>
     </KeyboardAwareScrollView>
   );
