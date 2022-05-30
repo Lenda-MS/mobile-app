@@ -10,18 +10,20 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Colors, FONTS } from "../theme";
-import { getScreenPercent } from "../utils";
+import { getScreenPercent, setUser } from "../utils";
 import { Alert, Button } from "../components";
 import { Screens } from "../navigations";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { firebase } from "../firebase";
+import GlassX from "glassx";
+import { useNavigation } from "@react-navigation/native";
 
-export const Login = ({ navigation }) => {
+export const Login = ({}) => {
   const [loading, setLoading] = useState();
   const [isError, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
-
+  const navigation = useNavigation();
   const loginSchema = Yup.object().shape({
     password: Yup.string()
       .min(5, "Enter minimum of 5 characters")
@@ -64,6 +66,12 @@ export const Login = ({ navigation }) => {
               const usersRef = firebase.firestore().collection("users");
               const doc = await usersRef.doc(uid).get();
               const userData = doc.data();
+              GlassX.set({
+                step: userData.step,
+                displaySuccess: false,
+                user: userData,
+              });
+              await setUser(userData);
               if (userData.status === "inactive")
                 navigation.navigate(Screens.APPLICATION);
               if (userData.status === "approved")
@@ -71,6 +79,7 @@ export const Login = ({ navigation }) => {
               resetForm();
               setLoading(false);
             } catch (err) {
+              console.log(err);
               setError(true);
               const message =
                 err.code === "auth/user-not-found"

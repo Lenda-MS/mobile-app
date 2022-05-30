@@ -13,8 +13,20 @@ import {
   WorkSans_500Medium,
 } from "@expo-google-fonts/work-sans";
 import AppLoading from "expo-app-loading";
+import GlassX, { PersistedState } from "glassx";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ProtectedRoute } from "./navigations/ProtectedRoute";
 
 const Stack = createNativeStackNavigator();
+GlassX.store({
+  plugins: [
+    new PersistedState({
+      storage: AsyncStorage,
+      env: "react-native",
+      key: "glassx",
+    }),
+  ],
+});
 export default function App() {
   const [fontsLoaded] = useFonts({
     WorkSans_300Light,
@@ -51,9 +63,12 @@ export default function App() {
             />
             <Stack.Screen
               name={Screens.APPLICATION}
-              component={Application}
-              options={{ headerShown: false }}
-            />
+              options={{ headerShown: false, gestureEnabled: false }}
+            >
+              {(props) => (
+                <ProtectedRoute component={Application} props={props} />
+              )}
+            </Stack.Screen>
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaProvider>

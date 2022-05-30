@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -10,26 +10,18 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Colors, FONTS } from "../theme";
-import { getScreenPercent } from "../utils";
+import { getScreenPercent, setUser } from "../utils";
 import { Alert, Button } from "../components";
 import { Screens } from "../navigations";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { firebase } from "../firebase";
+import GlassX from "glassx";
 
 export const Signup = ({ navigation }) => {
   const [loading, setLoading] = useState();
   const [isError, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState();
-  useEffect(() => {
-    const unSubscribe = firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        navigation.navigate(Screens.APPLICATION);
-      }
-    });
-
-    return unSubscribe;
-  }, []);
   const signupSchema = Yup.object().shape({
     fullname: Yup.string().required("Fullname is required"),
     password: Yup.string()
@@ -72,6 +64,14 @@ export const Signup = ({ navigation }) => {
           onSubmit={async (values, { resetForm }) => {
             try {
               setLoading(true);
+              const usersRef = firebase.firestore().collection("users");
+              const snapShot = await usersRef
+                .where("phoneNumber", "==", `233${values.phoneNumber}`)
+                .get();
+
+              if (!snapShot.empty) {
+                throw new Error("auth/phone-already-in-use");
+              }
               const res = await firebase
                 .auth()
                 .createUserWithEmailAndPassword(values.email, values.password);
@@ -81,17 +81,27 @@ export const Signup = ({ navigation }) => {
                 ...values,
                 phoneNumber: `233${values.phoneNumber}`,
                 status: "inactive",
+                step: 1,
+                createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
+                updatedAt: firebase.firestore.Timestamp.fromDate(new Date()),
               };
-              const usersRef = firebase.firestore().collection("users");
+
               await usersRef.doc(uid).set(data);
               resetForm();
               setLoading(false);
+              GlassX.set({ step: 1, displaySuccess: true, user: data });
+              await setUser(data);
+              navigation.navigate(Screens.APPLICATION);
             } catch (err) {
+              console.log(err);
+
               setError(true);
               const message =
                 err.code === "auth/email-already-in-use"
                   ? "🥵 Email is already in use"
-                  : "🥵 Somethin went wrong";
+                  : err.message == "auth/phone-already-in-use"
+                  ? "🥵 Phone number is already in use"
+                  : "🥵 Something went wrong";
 
               setErrorMessage(message);
               setLoading(false);
