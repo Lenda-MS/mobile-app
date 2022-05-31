@@ -22,6 +22,8 @@ export const AddressForm = ({ useStep }) => {
     gps_address: Yup.string(),
   });
 
+  const application = GlassX.get("application");
+
   const data = regions;
 
   return (
@@ -56,10 +58,10 @@ export const AddressForm = ({ useStep }) => {
       </View>
       <Formik
         initialValues={{
-          address: "",
-          region: "",
-          city: "",
-          gps_address: "",
+          address: application.address || "",
+          region: application.region || "",
+          city: application.city || "",
+          gps_address: application.gps_address || "",
         }}
         onSubmit={async (values, { resetForm }) => {
           try {
