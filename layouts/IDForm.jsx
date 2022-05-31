@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, TextInput } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import { Colors, FONTS } from "../theme";
 import { getScreenPercent } from "../utils";
 import { Button } from "../components";
@@ -57,23 +63,18 @@ export const IDForm = ({ useStep }) => {
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Upload ID card</Text>
-              <View style={styles.input}></View>
+              <TouchableOpacity
+                style={{ ...styles.input, ...styles.imagePicker }}
+              ></TouchableOpacity>
               {errors.address && touched.address ? (
                 <Text style={styles.errorStyle}>{errors.address}</Text>
               ) : null}
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Upload your picture</Text>
-              <View style={styles.input}>
-                <TextInput
-                  style={{ flex: 1, borderWidth: 0, ...styles.label }}
-                  value={values.address}
-                  onBlur={handleBlur("address")}
-                  onChangeText={(text) => {
-                    handleChange("address")(text);
-                  }}
-                />
-              </View>
+              <TouchableOpacity
+                style={{ ...styles.input, ...styles.imagePicker }}
+              ></TouchableOpacity>
               {errors.address && touched.address ? (
                 <Text style={styles.errorStyle}>{errors.address}</Text>
               ) : null}
@@ -130,11 +131,16 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: getScreenPercent(8),
   },
   backButton: {
     borderWidth: 2,
     backgroundColor: Colors.PRIMARY,
   },
+  imagePicker: {
+    height: getScreenPercent(50),
+  },
+
   input: {
     borderBottomColor: Colors.SECONDARY,
     borderWidth: 1.5,
