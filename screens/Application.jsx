@@ -9,19 +9,19 @@ import { firebase } from "../firebase";
 
 export const Application = ({}) => {
   const [step, setStep] = useStore("step");
+  const [application, setApplication] = useStore("application");
   const [loading, setLoading] = useState(true);
   const [_, setDisplaySuccess] = useStore("displaySuccess");
 
   useEffect(() => {
     const applicationsRef = firebase.firestore().collection("applications");
-    applicationsRef
-      .where("userId", "==", GlassX.get("user").id)
-      .onSnapshot((querySnapshot) => {
-        GlassX.set({
-          application: querySnapshot.docs[0].data(),
-        });
+    applicationsRef.doc(GlassX.get("user").id).onSnapshot((querySnapshot) => {
+      if (querySnapshot.exists) {
+        setApplication(querySnapshot.data());
         setLoading(false);
-      });
+      } else setApplication(undefined);
+      setLoading(false);
+    });
     return () => {
       setStep(undefined);
       setDisplaySuccess(false);

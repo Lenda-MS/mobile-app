@@ -14,6 +14,7 @@ export const AddressForm = ({ useStep }) => {
   const [loading, setLoading] = useState();
 
   const [displaySuccess, setDisplaySuccess] = useStore("displaySuccess");
+  const [application, setAppliication] = useStore("application");
 
   const addressSchema = Yup.object().shape({
     address: Yup.string().required("Address is required"),
@@ -21,8 +22,7 @@ export const AddressForm = ({ useStep }) => {
     city: Yup.string().required("City is required"),
     gps_address: Yup.string(),
   });
-
-  const application = GlassX.get("application");
+  console.log(application);
 
   const data = regions;
 
@@ -58,10 +58,10 @@ export const AddressForm = ({ useStep }) => {
       </View>
       <Formik
         initialValues={{
-          address: application.address || "",
-          region: application.region || "",
-          city: application.city || "",
-          gps_address: application.gps_address || "",
+          address: application ? application.address : "",
+          region: application ? application.region : "",
+          city: application ? application.city : "",
+          gps_address: application ? application.gps_address : "",
         }}
         onSubmit={async (values, { resetForm }) => {
           try {
@@ -70,8 +70,8 @@ export const AddressForm = ({ useStep }) => {
             const usersRef = firebase.firestore().collection("users");
             await usersRef.doc(user.id).update({ step: 2 });
             const data = {
+              id: user.id,
               ...values,
-              userId: user.id,
               status: "incomplete",
               createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
               updatedAt: firebase.firestore.Timestamp.fromDate(new Date()),
@@ -79,7 +79,12 @@ export const AddressForm = ({ useStep }) => {
             const applicationsRef = firebase
               .firestore()
               .collection("applications");
-            await applicationsRef.doc().set(data);
+            if (application) {
+              await applicationsRef.doc(user.id).update({
+                ...values,
+                updatedAt: firebase.firestore.Timestamp.fromDate(new Date()),
+              });
+            } else await applicationsRef.doc(user.id).set(data);
             setDisplaySuccess(false);
             setLoading(false);
             resetForm();
@@ -131,7 +136,7 @@ export const AddressForm = ({ useStep }) => {
                 onSelect={(selectedItem) => {
                   setFieldValue("region", selectedItem);
                 }}
-                defaultButtonText=""
+                defaultButtonText={values.region}
                 buttonTextStyle={{
                   ...styles.label,
                   textAlign: "left",

@@ -12,40 +12,13 @@ import { getScreenPercent } from "../utils";
 import { Button } from "../components";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import GlassX, { useStore } from "glassx";
+import GlassX from "glassx";
 import * as ImagePicker from "expo-image-picker";
-import { firebase } from "../firebase/config";
+import { firebase } from "../firebase";
 
 export const IDForm = ({ useStep }) => {
   const [loading, setLoading] = useState();
   const user = GlassX.get("user");
-
-  async function uploadImageAsync(uri, field) {
-    const fileExtension = uri.split(".").pop();
-
-    const fileName = `${user.id}-${field}-${new Date()
-      .toString()
-      .trim()
-      .replace(/ /g, "")}.${fileExtension}`;
-
-    // const blob = await new Promise((resolve, reject) => {
-    //   const xhr = new XMLHttpRequest();
-    //   xhr.onload = function () {
-    //     resolve(xhr.response);
-    //   };
-    //   xhr.onerror = function (e) {
-    //     console.log(e);
-    //     reject(new TypeError("Network request failed"));
-    //   };
-    //   xhr.responseType = "blob";
-    //   xhr.open("GET", uri, true);
-    //   xhr.send(null);
-    // });
-    // console.log(blob);
-    // const storageRef = firebase.storage().ref(`user.application/${fileName}`);
-
-    // await storageRef.put(blob);
-  }
 
   const idSchema = Yup.object().shape({
     idNumber: Yup.string().required("Ghana card number is required"),
@@ -59,14 +32,32 @@ export const IDForm = ({ useStep }) => {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
+      base64: true,
     });
 
     if (!result.cancelled) {
-      setImage(field, result.uri);
-      uploadImageAsync(result.uri, "idPicture");
+      const extension = result.uri.split(".").pop();
+      const base64Image = `data:image/${extension};base64,${result.base64}`;
+      setImage(field, base64Image);
     }
   };
+  const uploadImage = async (base64Image) => {
+    const apiUrl = "https://api.cloudinary.com/v1_1/ddoldsdnz/image/upload";
+    let data = {
+      file: base64Image,
+      upload_preset: "xflraxxn",
+    };
 
+    const r = await fetch(apiUrl, {
+      body: JSON.stringify(data),
+      headers: {
+        "content-type": "application/json",
+      },
+      method: "POST",
+    });
+    let json = await r.json();
+    return json.secure_url;
+  };
   return (
     <View>
       <Formik
@@ -77,8 +68,32 @@ export const IDForm = ({ useStep }) => {
         }}
         validationSchema={idSchema}
         onSubmit={async (values, { resetForm }) => {
-          console.log(values);
-          resetForm();
+          try {
+            setLoading(true);
+            const idPicture = await uploadImage(values.idPicture);
+            const userPicture = await uploadImage(values.userPicture);
+
+            const applicationsRef = firebase
+              .firestore()
+              .collection("applications");
+
+            await applicationsRef.doc(user.id).set(
+              {
+                idPicture,
+                userPicture,
+                idNumber: values.idNumber,
+                status: "processing",
+                updatedAt: firebase.firestore.Timestamp.fromDate(new Date()),
+              },
+              { merge: true }
+            );
+
+            setLoading(false);
+            resetForm();
+          } catch (err) {
+            console.log(err);
+            setLoading(false);
+          }
         }}
       >
         {({
@@ -101,7 +116,12 @@ export const IDForm = ({ useStep }) => {
             </Text>
             <View style={styles.inputContainer}>
               <Text style={styles.label}>Ghana card number</Text>
-              <View style={styles.input}>
+              <View style={[styles.input, styles.phoneInput]}>
+                <Text
+                  style={[styles.label, { marginRight: getScreenPercent(2) }]}
+                >
+                  GHA -
+                </Text>
                 <TextInput
                   style={{ flex: 1, borderWidth: 0, ...styles.label }}
                   value={values.idNumber}
@@ -111,6 +131,7 @@ export const IDForm = ({ useStep }) => {
                   }}
                 />
               </View>
+
               {errors.idNumber && touched.idNumber ? (
                 <Text style={styles.errorStyle}>{errors.idNumber}</Text>
               ) : null}
@@ -146,7 +167,9 @@ export const IDForm = ({ useStep }) => {
                   <Image
                     resizeMode="stretch"
                     style={styles.imagePreview}
-                    source={{ uri: values.userPicture }}
+                    source={{
+                      uri: values.userPicture,
+                    }}
                   />
                 ) : (
                   <UploadNotice text={"Upload your picture"} />
@@ -160,7 +183,6 @@ export const IDForm = ({ useStep }) => {
             <View style={styles.buttonContainer}>
               <Button
                 title={"Back"}
-                loading={loading}
                 textStyle={{ fontSize: 18, color: Colors.SECONDARY }}
                 style={{ ...styles.button, ...styles.backButton }}
                 onPress={() => useStep(1)}
@@ -221,6 +243,10 @@ const styles = StyleSheet.create({
   },
   errorStyle: {
     color: "red",
+  },
+  phoneInput: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   inputContainer: {
     marginBottom: "2%",

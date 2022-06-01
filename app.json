@@ -15,7 +15,7 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false
     },
     "android": {
       "adaptiveIcon": {
@@ -23,6 +23,8 @@
         "backgroundColor": "#FFFFFF"
       }
     },
+    "jsEngine": "hermes",
+
     "web": {
       "favicon": "./assets/favicon.png"
     }
