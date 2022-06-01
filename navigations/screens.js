@@ -5,4 +5,5 @@ export const Screens = {
   HOME: "Home",
   DASHBOARD: "Dashboard",
   APPLICATION: "Application",
+  NOTICE: "Notice",
 };

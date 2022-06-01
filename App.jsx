@@ -5,7 +5,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Screens } from "./navigations";
 
-import { Onboarding, Login, Signup, Home, Application } from "./screens";
+import {
+  Onboarding,
+  Login,
+  Signup,
+  Home,
+  Application,
+  Notice,
+} from "./screens";
 import {
   useFonts,
   WorkSans_300Light,
@@ -68,6 +75,12 @@ export default function App() {
               {(props) => (
                 <ProtectedRoute component={Application} props={props} />
               )}
+            </Stack.Screen>
+            <Stack.Screen
+              name={Screens.NOTICE}
+              options={{ headerShown: false }}
+            >
+              {(props) => <ProtectedRoute component={Notice} props={props} />}
             </Stack.Screen>
           </Stack.Navigator>
         </NavigationContainer>
