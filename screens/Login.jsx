@@ -64,18 +64,31 @@ export const Login = ({}) => {
                 .signInWithEmailAndPassword(values.email, values.password);
               const uid = res.user.uid;
               const usersRef = firebase.firestore().collection("users");
+              const applicationsRef = firebase
+                .firestore()
+                .collection("applications");
+
               const doc = await usersRef.doc(uid).get();
               const userData = doc.data();
+              const applicationDoc = await applicationsRef
+                .doc(GlassX.get("user").id)
+                .get();
               GlassX.set({
                 step: userData.step,
                 displaySuccess: false,
                 user: userData,
+                applications: applicationDoc.data(),
               });
               await setUser(userData);
-              if (userData.status === "inactive")
+              if (
+                ["processing", "disapproved"].includes(
+                  applicationDoc.data().status
+                )
+              )
+                navigation.navigate(Screens.NOTICE);
+              else if (userData.status === "inactive")
                 navigation.navigate(Screens.APPLICATION);
-              if (userData.status === "approved")
-                navigation.navigate(Screens.HOME);
+              else navigation.navigate(Screens.HOME);
               resetForm();
               setLoading(false);
             } catch (err) {

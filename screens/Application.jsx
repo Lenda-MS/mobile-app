@@ -6,8 +6,9 @@ import { Colors } from "../theme";
 import { AddressForm, AppLoader, IDForm } from "../layouts";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { firebase } from "../firebase";
+import { Screens } from "../navigations";
 
-export const Application = ({}) => {
+export const Application = ({ navigation }) => {
   const [step, setStep] = useStore("step");
   const [application, setApplication] = useStore("application");
   const [loading, setLoading] = useState(true);
@@ -18,6 +19,8 @@ export const Application = ({}) => {
     applicationsRef.doc(GlassX.get("user").id).onSnapshot((querySnapshot) => {
       if (querySnapshot.exists) {
         setApplication(querySnapshot.data());
+        if (querySnapshot.data().status == "processing")
+          navigation.navigate(Screens.NOTICE);
         setLoading(false);
       } else setApplication(undefined);
       setLoading(false);
