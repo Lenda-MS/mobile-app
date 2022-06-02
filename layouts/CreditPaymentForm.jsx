@@ -34,7 +34,7 @@ export const CreditPaymentForm = ({}) => {
           network: "",
         }}
         validationSchema={paymentSchema}
-        onSubmit={async (values, { resetForm }) => {
+        onSubmit={async (values) => {
           try {
             setLoading(true);
             if (Number(values.amount) > wallet.debt.toFixed(2)) {

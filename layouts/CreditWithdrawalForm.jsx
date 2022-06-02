@@ -34,10 +34,10 @@ export const CreditWithdrawalForm = ({}) => {
           network: "",
         }}
         validationSchema={withdrawalSchema}
-        onSubmit={async (values, { resetForm }) => {
+        onSubmit={async (values) => {
           try {
             setLoading(true);
-            if (Number(values.amount) > wallet.balance.toFixed(2)) {
+            if (getInterest(values.amount) > wallet.balance.toFixed(2)) {
               throw new Error("firestore/invalid-amount");
             }
             const walletsRef = firebase.firestore().collection("wallets");
