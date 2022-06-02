@@ -23,7 +23,7 @@ export const Transact = ({}) => {
             style={styles.buttonIcon}
             source={require("../assets/Iconly/Light/Download.png")}
           />
-          <Text style={styles.buttonText}>Pay</Text>
+          <Text style={styles.buttonText}>Pay Credit</Text>
         </Button>
         <Button style={{ ...styles.button, backgroundColor: Colors.SECONDARY }}>
           <Image
@@ -31,7 +31,7 @@ export const Transact = ({}) => {
             source={require("../assets/Iconly/Light/Upload.png")}
           />
           <Text style={{ ...styles.buttonText, color: Colors.PRIMARY }}>
-            Withdraw
+            Withdraw Credit
           </Text>
         </Button>
       </View>
