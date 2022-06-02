@@ -6,4 +6,7 @@ export const Screens = {
   DASHBOARD: "Dashboard",
   APPLICATION: "Application",
   NOTICE: "Notice",
+  SETTINGS: "Settings",
+  STATISTICS: "Statistics",
+  TRANSACT: "Transct",
 };

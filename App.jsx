@@ -63,14 +63,12 @@ export default function App() {
               component={Signup}
               options={{ headerShown: false }}
             />
-            <Stack.Screen
-              name={Screens.HOME}
-              component={Home}
-              options={{ headerShown: false }}
-            />
+            <Stack.Screen name={Screens.HOME} options={{ headerShown: false }}>
+              {(props) => <ProtectedRoute component={Home} props={props} />}
+            </Stack.Screen>
             <Stack.Screen
               name={Screens.APPLICATION}
-              options={{ headerShown: false }}
+              options={{ headerShown: false, gestureEnabled: false }}
             >
               {(props) => (
                 <ProtectedRoute component={Application} props={props} />
@@ -78,7 +76,7 @@ export default function App() {
             </Stack.Screen>
             <Stack.Screen
               name={Screens.NOTICE}
-              options={{ headerShown: false }}
+              options={{ headerShown: false, gestureEnabled: false }}
             >
               {(props) => <ProtectedRoute component={Notice} props={props} />}
             </Stack.Screen>
