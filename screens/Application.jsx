@@ -10,7 +10,7 @@ import { Screens } from "../navigations";
 
 export const Application = ({ navigation }) => {
   const [step, setStep] = useStore("step");
-  const [application, setApplication] = useStore("application");
+  const [__, setApplication] = useStore("application");
   const [loading, setLoading] = useState(true);
   const [_, setDisplaySuccess] = useStore("displaySuccess");
 
