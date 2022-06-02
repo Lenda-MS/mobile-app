@@ -1,13 +1,27 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import { View, StyleSheet, Text, Image } from "react-native";
 import LottieView from "lottie-react-native";
 import { Colors, FONTS } from "../theme";
 import { getScreenPercent } from "../utils";
 import { Button } from "../components";
+import { TransactionModal } from "../layouts";
 
 export const Transact = ({}) => {
+  const refRBSheet = useRef();
+  const [transactionType, setTransactionType] = useState();
+
+  const openTransactionModal = (type) => {
+    refRBSheet.current.open();
+    setTransactionType(type);
+  };
+
   return (
     <View style={styles.container}>
+      <TransactionModal
+        ref={refRBSheet}
+        type={transactionType}
+        setType={setTransactionType}
+      />
       <LottieView
         style={{ height: getScreenPercent(55) }}
         source={require("../assets/payorwithdrawal.json")}
@@ -18,14 +32,20 @@ export const Transact = ({}) => {
         Pay or Withdraw
       </Text>
       <View style={{ marginTop: getScreenPercent(20) }}>
-        <Button style={styles.button}>
+        <Button
+          style={styles.button}
+          onPress={() => openTransactionModal("pay")}
+        >
           <Image
             style={styles.buttonIcon}
             source={require("../assets/Iconly/Light/Download.png")}
           />
           <Text style={styles.buttonText}>Pay Credit</Text>
         </Button>
-        <Button style={{ ...styles.button, backgroundColor: Colors.SECONDARY }}>
+        <Button
+          style={{ ...styles.button, backgroundColor: Colors.SECONDARY }}
+          onPress={() => openTransactionModal("withdraw")}
+        >
           <Image
             style={styles.buttonIcon}
             source={require("../assets/Iconly/Light/Upload.png")}

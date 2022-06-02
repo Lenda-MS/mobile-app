@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, Image } from "react-native";
 import { Colors } from "../theme";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -8,10 +8,27 @@ import { Settings } from "./Settings";
 import { Transact } from "./Transact";
 import { Statistics } from "./Statistics";
 import { getScreenPercent } from "../utils";
+import GlassX, { useStore } from "glassx";
+import { AppLoader } from "../layouts";
+import { firebase } from "../firebase";
 
 const Tab = createBottomTabNavigator();
 
-export const Home = ({}) => {
+export const Home = ({ navigation }) => {
+  const [_, setWallet] = useStore("wallet");
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const walletsRef = firebase.firestore().collection("wallets");
+    walletsRef.doc(GlassX.get("user").id).onSnapshot((querySnapshot) => {
+      if (querySnapshot.exists) {
+        setWallet(querySnapshot.data());
+        setLoading(false);
+      } else navigation.navigate(Screens.LOGIN);
+
+      setLoading(false);
+    });
+  }, []);
+  if (loading) return <AppLoader />;
   return (
     <Tab.Navigator
       initialRouteName={Screens.DASHBOARD}

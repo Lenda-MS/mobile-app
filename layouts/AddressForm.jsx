@@ -14,7 +14,7 @@ export const AddressForm = ({ useStep }) => {
   const [loading, setLoading] = useState();
 
   const [displaySuccess, setDisplaySuccess] = useStore("displaySuccess");
-  const [application, setAppliication] = useStore("application");
+  const [application] = useStore("application");
 
   const addressSchema = Yup.object().shape({
     address: Yup.string().required("Address is required"),
@@ -22,7 +22,6 @@ export const AddressForm = ({ useStep }) => {
     city: Yup.string().required("City is required"),
     gps_address: Yup.string(),
   });
-  console.log(application);
 
   const data = regions;
 
