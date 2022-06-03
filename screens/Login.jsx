@@ -83,8 +83,7 @@ export const Login = ({}) => {
               await setUser(userData);
               if (!applicationDoc.exists)
                 navigation.navigate(Screens.APPLICATION);
-
-              if (
+              else if (
                 ["processing", "disapproved"].includes(
                   applicationDoc.data().status
                 )
