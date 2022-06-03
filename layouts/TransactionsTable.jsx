@@ -7,7 +7,23 @@ import { getScreenPercent } from "../utils";
 export const TransactionsTable = ({ transactions, loading }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Transactions</Text>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Text style={styles.header}>Transactions</Text>
+        <Text
+          style={{
+            fontSize: getScreenPercent(4.5),
+            fontFamily: FONTS.WORK_SANS_MEDIUM,
+          }}
+        >
+          Last 5
+        </Text>
+      </View>
       {loading ? (
         <View>
           <AnimatedLottieView
