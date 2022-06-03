@@ -18,16 +18,17 @@ export const Notice = ({ navigation }) => {
     applicationsRef.doc(GlassX.get("user").id).onSnapshot((querySnapshot) => {
       if (querySnapshot.exists) {
         setApplication(querySnapshot.data());
-        if (querySnapshot.data().status == "approved")
-          navigation.navigate(Screens.HOME);
-        setLoading(false);
       } else {
-        navigation.navigate(Screens.LOGIN);
+        setLoading(false);
         setApplication(undefined);
+        navigation.navigate(Screens.LOGIN);
       }
-      setLoading(false);
     });
+    setLoading(false);
+
+    return () => setLoading(false);
   }, []);
+  console.log(application.status);
   if (loading) return <AppLoader />;
   const signout = async () => {
     setLoading(true);
@@ -41,8 +42,10 @@ export const Notice = ({ navigation }) => {
     <View style={styles.container}>
       {application.status === "processing" ? (
         <Processing />
+      ) : application.status === "disapproved" ? (
+        <Disapproved />
       ) : (
-        application.status === "disapproved" && <Disapproved />
+        <Approved navigation={navigation} />
       )}
 
       <Button
@@ -76,7 +79,7 @@ const Processing = () => {
           lineHeight: getScreenPercent(8),
         }}
       >
-        You would be redirected to your Dashboard once you are approved.
+        Your application is being reviewed
       </Text>
     </>
   );
@@ -102,6 +105,43 @@ const Disapproved = () => {
       >
         Your application is unsuccessful. We cant approve credit at this time.
       </Text>
+    </>
+  );
+};
+const Approved = ({ navigation }) => {
+  return (
+    <>
+      <LottieView
+        style={{ height: getScreenPercent(55) }}
+        source={require("../assets/approved.json")}
+        autoPlay
+        loop
+      />
+      <Text style={{ ...styles.notice, fontSize: getScreenPercent(9.1) }}>
+        Application Approved
+      </Text>
+      <Text
+        style={{
+          ...styles.notice,
+          marginTop: getScreenPercent(4),
+          fontSize: getScreenPercent(6),
+          lineHeight: getScreenPercent(8),
+        }}
+      >
+        You have been awarded a credit of GHS 200.00
+      </Text>
+      <Button
+        title={"View dashboard"}
+        onPress={() => navigation.navigate(Screens.HOME)}
+        textStyle={{ fontSize: getScreenPercent(4.5), color: Colors.PRIMARY }}
+        style={{
+          width: getScreenPercent(45),
+          backgroundColor: Colors.SECONDARY,
+          height: getScreenPercent(14),
+          marginBottom: getScreenPercent(-20),
+          marginTop: getScreenPercent(10),
+        }}
+      />
     </>
   );
 };

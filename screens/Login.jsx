@@ -73,6 +73,7 @@ export const Login = ({}) => {
               const applicationDoc = await applicationsRef
                 .doc(GlassX.get("user").id)
                 .get();
+
               GlassX.set({
                 step: userData.step,
                 displaySuccess: false,
@@ -80,6 +81,9 @@ export const Login = ({}) => {
                 applications: applicationDoc.data(),
               });
               await setUser(userData);
+              if (!applicationDoc.exists)
+                navigation.navigate(Screens.APPLICATION);
+
               if (
                 ["processing", "disapproved"].includes(
                   applicationDoc.data().status

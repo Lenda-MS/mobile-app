@@ -17,6 +17,21 @@ export const TransactionsTable = ({ transactions, loading }) => {
             loop
           />
         </View>
+      ) : transactions.length === 0 ? (
+        <View>
+          <AnimatedLottieView
+            style={{
+              height: getScreenPercent(40),
+              width: getScreenPercent(40),
+            }}
+            source={require("../assets/emptytransaction.json")}
+            autoPlay
+            loop
+          />
+          <Text style={{ ...styles.header, textAlign: "center" }}>
+            No Transactions
+          </Text>
+        </View>
       ) : (
         <View style={{ marginTop: getScreenPercent(4) }}>
           {transactions.map((transaction) => {
