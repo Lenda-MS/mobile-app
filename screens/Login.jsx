@@ -81,6 +81,8 @@ export const Login = ({}) => {
                 applications: applicationDoc.data(),
               });
               await setUser(userData);
+              resetForm();
+              setLoading(false);
               if (!applicationDoc.exists)
                 navigation.navigate(Screens.APPLICATION);
               else if (
@@ -92,8 +94,6 @@ export const Login = ({}) => {
               else if (userData.status === "inactive")
                 navigation.navigate(Screens.APPLICATION);
               else navigation.navigate(Screens.HOME);
-              resetForm();
-              setLoading(false);
             } catch (err) {
               console.log(err);
               setError(true);
