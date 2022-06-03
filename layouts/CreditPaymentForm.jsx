@@ -49,6 +49,7 @@ export const CreditPaymentForm = ({}) => {
             await transactionsRef.doc(transactionId).set({
               ...values,
               userId: user.id,
+              type: "payment",
               id: transactionId,
               createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
               updatedAt: firebase.firestore.Timestamp.fromDate(new Date()),
@@ -60,11 +61,16 @@ export const CreditPaymentForm = ({}) => {
             }
 
             setLoading(false);
-            await walletsRef.doc(user.id).update({
-              balance: wallet.balance + Number(values.amount),
-              debt: wallet.debt - Number(values.amount),
-            });
+            const balance = Number(
+              wallet.balance + Number(values.amount)
+            ).toFixed(2);
+            const debt = Number(wallet.debt - Number(values.amount)).toFixed(2);
+
             values.amount = "";
+            await walletsRef.doc(user.id).update({
+              balance: Number(balance),
+              debt: Number(debt),
+            });
           } catch (err) {
             const message =
               err.message === "firestore/invalid-amount"

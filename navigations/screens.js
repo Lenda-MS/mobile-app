@@ -7,6 +7,5 @@ export const Screens = {
   APPLICATION: "Application",
   NOTICE: "Notice",
   SETTINGS: "Settings",
-  STATISTICS: "Statistics",
   TRANSACT: "Transct",
 };

@@ -50,17 +50,24 @@ export const CreditWithdrawalForm = ({}) => {
               ...values,
               userId: user.id,
               id: transactionId,
+              type: "withdrawal",
               createdAt: firebase.firestore.Timestamp.fromDate(new Date()),
               updatedAt: firebase.firestore.Timestamp.fromDate(new Date()),
             });
-            await walletsRef.doc(user.id).update({
-              balance: wallet.balance - getInterest(values.amount),
-              debt: wallet.debt + getInterest(values.amount),
-            });
+            const balance = Number(
+              wallet.balance - getInterest(values.amount)
+            ).toFixed(2);
+            const debt = Number(
+              wallet.debt + getInterest(values.amount)
+            ).toFixed(2);
+
             setSuccess(true);
             setError(false);
             setLoading(false);
-
+            await walletsRef.doc(user.id).update({
+              balance: Number(balance),
+              debt: Number(debt),
+            });
             values.amount = "";
           } catch (err) {
             const message =
@@ -184,11 +191,11 @@ export const CreditWithdrawalForm = ({}) => {
                 marginTop: getScreenPercent(3),
               }}
             >
-              To pay: GHS {getInterest(values.amount)}
+              You pay: GHS {getInterest(values.amount)}
             </Text>
 
             <Button
-              title={"Pay credit"}
+              title={"Withdraw credit"}
               spinnerStyle={{ color: Colors.PRIMARY }}
               loading={loading}
               textStyle={{ fontSize: 16, color: "white" }}

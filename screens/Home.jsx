@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Image } from "react-native";
-import { Colors } from "../theme";
+import { FONTS } from "../theme";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Screens } from "../navigations";
 import { Dashboard } from "./Dashboard";
 import { Settings } from "./Settings";
 import { Transact } from "./Transact";
-import { Statistics } from "./Statistics";
-import { getScreenPercent } from "../utils";
+import { getScreenPercent, setUser } from "../utils";
 import GlassX, { useStore } from "glassx";
 import { AppLoader } from "../layouts";
 import { firebase } from "../firebase";
@@ -17,6 +16,7 @@ const Tab = createBottomTabNavigator();
 export const Home = ({ navigation }) => {
   const [_, setWallet] = useStore("wallet");
   const [loading, setLoading] = useState(true);
+  const [__, setStore] = useStore();
   useEffect(() => {
     const walletsRef = firebase.firestore().collection("wallets");
     walletsRef.doc(GlassX.get("user").id).onSnapshot((querySnapshot) => {
@@ -28,7 +28,16 @@ export const Home = ({ navigation }) => {
       setLoading(false);
     });
   }, []);
+
   if (loading) return <AppLoader />;
+  const signout = async () => {
+    setLoading(true);
+    await firebase.auth().signOut();
+    setStore({});
+    await setUser("");
+    navigation.navigate(Screens.LOGIN);
+    setLoading(false);
+  };
   return (
     <Tab.Navigator
       initialRouteName={Screens.DASHBOARD}
@@ -38,8 +47,8 @@ export const Home = ({ navigation }) => {
     >
       <Tab.Screen
         name={Screens.DASHBOARD}
-        component={Dashboard}
         options={{
+          headerShown: false,
           tabBarIcon: ({ focused }) => {
             return (
               <TabIcon
@@ -50,7 +59,9 @@ export const Home = ({ navigation }) => {
             );
           },
         }}
-      />
+      >
+        {(props) => <Dashboard {...props} />}
+      </Tab.Screen>
       <Tab.Screen
         name={Screens.TRANSACT}
         component={Transact}
@@ -68,24 +79,12 @@ export const Home = ({ navigation }) => {
         }}
       />
       <Tab.Screen
-        name={Screens.STATISTICS}
-        component={Statistics}
-        options={{
-          tabBarIcon: ({ focused }) => {
-            return (
-              <TabIcon
-                focused={focused}
-                activeImage={require("../assets/Iconly/Bold/Chart.png")}
-                image={require("../assets/Iconly/Light/Chart.png")}
-              />
-            );
-          },
-        }}
-      />
-      <Tab.Screen
         name={Screens.SETTINGS}
-        component={Settings}
         options={{
+          headerTitleStyle: {
+            fontFamily: FONTS.WORK_SANS_MEDIUM,
+            fontSize: getScreenPercent(5.4),
+          },
           tabBarIcon: ({ focused }) => {
             return (
               <TabIcon
@@ -96,7 +95,9 @@ export const Home = ({ navigation }) => {
             );
           },
         }}
-      />
+      >
+        {(props) => <Settings signout={signout} {...props} />}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 };
